@@ -199,6 +199,16 @@ npm run dev
 The frontend application will run at: `http://localhost:5173`
 
 ---
+## Demo Login Credentials
+
+### Admin Account
+
+- Email: vaishnavi@gmail.com
+- Password: Admin@123
+
+### Other Test Accounts
+
+You can also register a new normal user account to explore the application.
 
 ## Author
 
