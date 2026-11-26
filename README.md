@@ -21,6 +21,7 @@ A full-stack web application designed for role-based store management and custom
 - [Project Structure](#project-structure)
 - [Application Screenshots](#application-screenshots)
 - [Installation and Setup](#installation-and-setup)
+- [Demo Login Credentials](#demo-login-credentials)
 - [Author](#author)
 
 ---
@@ -92,7 +93,7 @@ The relational data layer is managed using **MySQL** and **Prisma ORM**, structu
 
 ```text
 roxiler_system/
-├── backend/          # Express.js REST API, Prisma schema, controllers, and auth middleware
+├── backend/          # Express.js REST API, Prisma schema, seed script, controllers, and auth middleware
 ├── frontend/         # React + Vite client application, Tailwind styles, and role-based views
 ├── screenshots/      # Application interface previews
 ├── .gitignore        # Git ignore rules
@@ -158,22 +159,42 @@ cd backend
 npm install
 ```
 
-Create a `.env` file inside the `backend/` directory and configure the following environment variables:
+Create a `.env` file inside the `backend/` directory using `.env.example` as a reference, and configure the following environment variables:
 
 ```env
-DATABASE_URL="YOUR_MYSQL_DATABASE_URL"
-JWT_SECRET="YOUR_SECRET_KEY"
+PORT=5000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=YOUR_MYSQL_PASSWORD
+DB_NAME=roxiler_store_rating
+JWT_SECRET=YOUR_PRIVATE_SECRET
+DATABASE_URL="mysql://root:YOUR_MYSQL_PASSWORD@localhost:3306/roxiler_store_rating"
+ADMIN_EMAIL=admin@roxiler.com
+ADMIN_PASSWORD=YOUR_ADMIN_DEMO_PASSWORD
 ```
 
-Generate the Prisma Client:
+Create the MySQL database:
+
+```sql
+CREATE DATABASE roxiler_store_rating;
+```
+
+Generate the Prisma Client and apply migrations:
 
 ```bash
 npx prisma generate
+npx prisma migrate deploy
 ```
 
-> **Note:** Apply your database schema/migrations according to your local setup before starting the server (confirm migration command in `backend/package.json`, e.g., `npx prisma migrate dev` or `npx prisma db push`).
+Create the default Admin account:
 
-Start the backend server (confirm the exact start script in `backend/package.json`, e.g., `npm run dev` or `npm start`):
+```bash
+npx prisma db seed
+```
+
+> The seed command creates the Admin account with the credentials configured in your backend `.env` file. The password is securely hashed using `bcrypt`.
+
+Start the backend server:
 
 ```bash
 npm run dev
@@ -190,7 +211,7 @@ cd frontend
 npm install
 ```
 
-Start the Vite development server (confirm script in `frontend/package.json` if customized):
+Start the Vite development server:
 
 ```bash
 npm run dev
@@ -199,16 +220,27 @@ npm run dev
 The frontend application will run at: `http://localhost:5173`
 
 ---
+
 ## Demo Login Credentials
 
 ### Admin Account
 
-- Email: vaishnavi@gmail.com
-- Password: Admin@123
+The Admin account is created automatically using the Prisma seed script.
+
+| Field | Value |
+| :--- | :--- |
+| **Email** | `admin@roxiler.com` |
+| **Password** | `YOUR_ADMIN_DEMO_PASSWORD` |
+| **Role** | `ADMIN` |
+
+> **Note:** Replace `YOUR_ADMIN_DEMO_PASSWORD` above with the actual password configured in your `.env` before sharing or demonstrating the application.
 
 ### Other Test Accounts
 
-You can also register a new normal user account to explore the application.
+- **Normal Users:** Can register directly through the application's registration page.
+- **Store Owners:** Can be created by the Admin through the Admin Dashboard.
+
+---
 
 ## Author
 
