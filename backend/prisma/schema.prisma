@@ -1,0 +1,56 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model ratings {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  store_id   Int
+  rating     Int
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "ratings_ibfk_1")
+  stores     stores    @relation(fields: [store_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "ratings_ibfk_2")
+
+  @@unique([user_id, store_id], map: "unique_user_store")
+  @@index([store_id], map: "store_id")
+}
+
+model stores {
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(100)
+  email      String    @db.VarChar(255)
+  address    String    @db.VarChar(400)
+  owner_id   Int
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  ratings    ratings[]
+  users      users     @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "stores_ibfk_1")
+
+  @@index([owner_id], map: "owner_id")
+}
+
+model users {
+  id         Int        @id @default(autoincrement())
+  name       String     @db.VarChar(60)
+  email      String     @unique(map: "email") @db.VarChar(255)
+  password   String     @db.VarChar(255)
+  address    String?    @db.VarChar(400)
+  role       users_role @default(USER)
+  created_at DateTime?  @default(now()) @db.Timestamp(0)
+  ratings    ratings[]
+  stores     stores[]
+}
+
+enum users_role {
+  ADMIN
+  USER
+  STORE_OWNER
+}
